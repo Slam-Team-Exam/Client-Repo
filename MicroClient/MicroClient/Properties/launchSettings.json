@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "MicroClient": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}
