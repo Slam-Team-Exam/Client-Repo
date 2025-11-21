@@ -3,30 +3,34 @@ using System.Net.Http;
 using System.Threading.Tasks;
 internal class Program
 {
-    private static async Task Main(string[] args)
+    private static async Task<int> Main(string[] args)
     {
         Console.WriteLine("Client starting…");
 
-        // You can override this from Docker Compose using environment variables
-        var serviceUrl = Environment.GetEnvironmentVariable("SERVICE_URL")
-                         ?? "http://service:8080/health";
+        // Read URLs from environment variables or use defaults
+        var loginUrl = Environment.GetEnvironmentVariable("LOGIN_URL") ?? "http://login:8080/api/auth/health";
+        var matchmakerUrl = Environment.GetEnvironmentVariable("MATCHMAKER_URL") ?? "http://matchmakerservice:5000/Match/health";
 
         using var httpClient = new HttpClient();
 
         try
         {
-            Console.WriteLine($"Calling: {serviceUrl}");
+            // Call login service
+            Console.WriteLine($"Calling Login service at: {loginUrl}");
+            var loginResponse = await httpClient.GetAsync(loginUrl);
+            loginResponse.EnsureSuccessStatusCode();
+            Console.WriteLine("Login service responded:");
+            Console.WriteLine(await loginResponse.Content.ReadAsStringAsync());
 
-            var response = await httpClient.GetAsync(serviceUrl);
-            response.EnsureSuccessStatusCode();
+            // Call matchmaker service
+            Console.WriteLine($"Calling Matchmaker service at: {matchmakerUrl}");
+            var matchResponse = await httpClient.GetAsync(matchmakerUrl);
+            matchResponse.EnsureSuccessStatusCode();
+            Console.WriteLine("Matchmaker service responded:");
+            Console.WriteLine(await matchResponse.Content.ReadAsStringAsync());
 
-            var content = await response.Content.ReadAsStringAsync();
-
-            Console.WriteLine("Service responded with:");
-            Console.WriteLine(content);
-
-            // Exit code 0 = success (important for automated walking skeleton tests)
-            Environment.Exit(0);
+            // Exit code 0 = success
+            return 0;
         }
         catch (Exception ex)
         {
@@ -34,7 +38,7 @@ internal class Program
             Console.WriteLine(ex);
 
             // Non-zero exit code indicates failure in CI/Compose
-            Environment.Exit(1);
+            return 1;
         }
     }
 }
