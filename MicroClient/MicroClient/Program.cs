@@ -21,10 +21,10 @@ internal class Program
                         ?? "http://playerinfoservice:6000/api/player"; // GET /api/player
 
         var gameServerUrl = Environment.GetEnvironmentVariable("GAME_SERVEL_URL")
-                        ?? "http://localhost:5001/health";
+                        ?? "http://gameserver:5001/health";
 
         var relayRouterURL = Environment.GetEnvironmentVariable("RELAY_ROUTER_URL")
-                        ?? "http://localhost:5002/health";
+                        ?? "http://relayrouter:5002/health";
 
         using var httpClient = new HttpClient();
 
