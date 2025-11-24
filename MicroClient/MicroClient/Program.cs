@@ -18,7 +18,7 @@ internal class Program
                        ?? "http://storeservice:8081/Store";   // GET /Store
 
         var playerUrl = Environment.GetEnvironmentVariable("PLAYER_URL") 
-                        ?? "http://playerinfoservice:6000/api/player"; // GET /api/player
+                        ?? "http://playerinfoservice:6000/api/player/GetPlayerInfo"; // GET /api/player
 
         var gameServerUrl = Environment.GetEnvironmentVariable("GAME_SERVEL_URL")
                         ?? "http://gameserver:5001/health";
@@ -59,16 +59,16 @@ internal class Program
                 Console.WriteLine("Player Info OK: " + await playerResponse.Content.ReadAsStringAsync());
 
                 // Game Server
-                Console.WriteLine($"Calling Player Info at: {gameServerUrl}");
+                Console.WriteLine($"Game Server at: {gameServerUrl}");
                 var gameServerRespone = await httpClient.GetAsync(gameServerUrl);
                 gameServerRespone.EnsureSuccessStatusCode();
-                Console.WriteLine("Player Info OK: " + await playerResponse.Content.ReadAsStringAsync());
+                Console.WriteLine("Game Server: " + await playerResponse.Content.ReadAsStringAsync());
 
                 //Relay Router
-                Console.WriteLine($"Calling Player Info at: {relayRouterURL}");
+                Console.WriteLine($"Relay Router Info at: {relayRouterURL}");
                 var relayRouterRespone = await httpClient.GetAsync(relayRouterURL);
                 relayRouterRespone.EnsureSuccessStatusCode();
-                Console.WriteLine("Player Info OK: " + await relayRouterRespone.Content.ReadAsStringAsync());
+                Console.WriteLine("/Relay Router OK: " + await relayRouterRespone.Content.ReadAsStringAsync());
             }
             catch (Exception ex)
             {
