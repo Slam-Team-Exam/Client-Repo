@@ -1,23 +1,21 @@
-# Build stage
+# ------------------ Build Stage ------------------
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
-# Copy csproj and restore
-COPY ["MicroClient.csproj", "./"]
-RUN dotnet restore "./MicroClient.csproj"
+# Copy project file(s) and restore dependencies
+COPY *.csproj ./
+RUN dotnet restore
 
-# Copy all files and build
-COPY . .
-RUN dotnet build "./MicroClient.csproj" -c $BUILD_CONFIGURATION -o /app/build
+# Copy all source files and publish
+COPY . ./
+RUN dotnet publish -c Release -o /app/publish /p:UseAppHost=false
 
-# Publish stage
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./MicroClient.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
-
-# Final stage
+# ------------------ Runtime Stage ------------------
 FROM mcr.microsoft.com/dotnet/runtime:8.0 AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
+
+# Copy published output from build stage
+COPY --from=build /app/publish .
+
+# Set the entrypoint to run the console app
 ENTRYPOINT ["dotnet", "MicroClient.dll"]
