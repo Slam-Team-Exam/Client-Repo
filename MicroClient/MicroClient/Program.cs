@@ -20,6 +20,12 @@ internal class Program
         var playerUrl = Environment.GetEnvironmentVariable("PLAYER_URL") 
                         ?? "http://playerinfoservice:6000/api/player"; // GET /api/player
 
+        var gameServerUrl = Environment.GetEnvironmentVariable("GAME_SERVEL_URL")
+                        ?? "http://localhost:5001/health";
+
+        var relayRouterURL = Environment.GetEnvironmentVariable("RELAY_ROUTER_URL")
+                        ?? "http://localhost:5002/health";
+
         using var httpClient = new HttpClient();
 
         while (true)
@@ -51,6 +57,18 @@ internal class Program
                 var playerResponse = await httpClient.GetAsync(playerUrl);
                 playerResponse.EnsureSuccessStatusCode();
                 Console.WriteLine("Player Info OK: " + await playerResponse.Content.ReadAsStringAsync());
+
+                // Game Server
+                Console.WriteLine($"Calling Player Info at: {gameServerUrl}");
+                var gameServerRespone = await httpClient.GetAsync(gameServerUrl);
+                gameServerRespone.EnsureSuccessStatusCode();
+                Console.WriteLine("Player Info OK: " + await playerResponse.Content.ReadAsStringAsync());
+
+                //Relay Router
+                Console.WriteLine($"Calling Player Info at: {relayRouterURL}");
+                var relayRouterRespone = await httpClient.GetAsync(relayRouterURL);
+                relayRouterRespone.EnsureSuccessStatusCode();
+                Console.WriteLine("Player Info OK: " + await relayRouterRespone.Content.ReadAsStringAsync());
             }
             catch (Exception ex)
             {
