@@ -15,7 +15,7 @@ internal class Program
                             ?? "http://matchmakerservice:5000/Match/health";
 
         var storeUrl = Environment.GetEnvironmentVariable("STORE_URL") 
-                       ?? "http://storeservice:8080/Store";   // GET /Store
+                       ?? "http://storeservice:8081/Store";   // GET /Store
 
         var playerUrl = Environment.GetEnvironmentVariable("PLAYER_URL") 
                         ?? "http://playerinfoservice:6000/api/player"; // GET /api/player
