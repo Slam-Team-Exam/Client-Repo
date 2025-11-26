@@ -1,0 +1,42 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Check .NET project version
+      working-directory: ./MicroClient/MicroClient
+      run: |
+        VERSION=$(grep -oPm1 "(?<=<Version>)[^<]+" MicroClient.csproj)
+        echo "Found project version: $VERSION"
+        if [ -z "$VERSION" ]; then
+          echo "No <Version> found in MicroClient.csproj!"
+          exit 1
+        fi
+
+    - name: Build .NET project
+      working-directory: ./MicroClient/MicroClient
+      run: dotnet build --configuration Release
+
+    - name: Publish .NET project
+      working-directory: ./MicroClient/MicroClient
+      run: dotnet publish -c Release -o ./publish
+
+    - name: Build Docker image
+      working-directory: ./MicroClient/MicroClient
+      run: docker build . -f Dockerfile -t micro-client:$(date +%s)
