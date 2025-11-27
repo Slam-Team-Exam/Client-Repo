@@ -28,6 +28,7 @@ jobs:
           echo "No <Version> found in MicroClient.csproj!"
           exit 1
         fi
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
 
     - name: Build .NET project
       working-directory: ./MicroClient/MicroClient
@@ -37,6 +38,18 @@ jobs:
       working-directory: ./MicroClient/MicroClient
       run: dotnet publish -c Release -o ./publish
 
+    - name: Log in to Docker Hub
+      run: echo "${{ secrets.docker_hub_pass }}" | docker login -u "${{ secrets.docker_hub_name }}" --password-stdin
+
     - name: Build Docker image
       working-directory: ./MicroClient/MicroClient
-      run: docker build . -f Dockerfile -t micro-client:$(date +%s)
+      run: |
+        docker build . -f Dockerfile \
+          -t ${{ secrets.docker_hub_name }}/micro-client:${VERSION} \
+          -t ${{ secrets.docker_hub_name }}/micro-client:latest
+
+    - name: Push Docker image
+      run: |
+        docker push ${{ secrets.docker_hub_name }}/micro-client:${VERSION}
+        docker push ${{ secrets.docker_hub_name }}/micro-client:latest
+
