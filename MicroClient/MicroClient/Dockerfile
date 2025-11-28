@@ -14,7 +14,7 @@ RUN dotnet restore "MicroClient.csproj"
 COPY . .
 
 # Byg projektet
-RUN dotnet build "MicroClient.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "MicroClient.csproj" -c Release -o /app/build
 
 # Publish stage
 FROM build AS publish
@@ -30,3 +30,4 @@ COPY --from=build /app/publish .
 
 # Set the entrypoint to run the console app
 ENTRYPOINT ["dotnet", "MicroClient.dll"]
+
