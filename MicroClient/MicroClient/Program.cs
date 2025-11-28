@@ -57,18 +57,6 @@ internal class Program
                 var playerResponse = await httpClient.GetAsync(playerUrl);
                 playerResponse.EnsureSuccessStatusCode();
                 Console.WriteLine("Player Info OK: " + await playerResponse.Content.ReadAsStringAsync());
-
-                // Game Server
-                Console.WriteLine($"Game Server at: {gameServerUrl}");
-                var gameServerRespone = await httpClient.GetAsync(gameServerUrl);
-                gameServerRespone.EnsureSuccessStatusCode();
-                Console.WriteLine("Game Server: " + await playerResponse.Content.ReadAsStringAsync());
-
-                //Relay Router
-                Console.WriteLine($"Relay Router Info at: {relayRouterURL}");
-                var relayRouterRespone = await httpClient.GetAsync(relayRouterURL);
-                relayRouterRespone.EnsureSuccessStatusCode();
-                Console.WriteLine("/Relay Router OK: " + await relayRouterRespone.Content.ReadAsStringAsync());
             }
             catch (Exception ex)
             {
