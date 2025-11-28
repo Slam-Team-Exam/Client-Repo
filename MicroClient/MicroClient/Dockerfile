@@ -1,17 +1,28 @@
-# ------------------ Build Stage ------------------
+# Base image til at køre app'en
+FROM mcr.microsoft.com/dotnet/runtime:8.0 AS base
+WORKDIR /app
+
+# Build image
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy project file(s) and restore dependencies
-COPY *.csproj ./
-RUN dotnet restore
+# Kopiér kun csproj først (for bedre caching)
+COPY ["MicroClient.csproj", "./"]
+RUN dotnet restore "MicroClient.csproj"
 
-# Copy all source files and publish
-COPY . ./
-RUN dotnet publish -c Release -o /app/publish /p:UseAppHost=false
+# Kopiér resten af koden
+COPY . .
 
-# ------------------ Runtime Stage ------------------
-FROM mcr.microsoft.com/dotnet/runtime:8.0 AS final
+# Byg projektet
+RUN dotnet build "MicroClient.csproj" -c $BUILD_CONFIGURATION -o /app/build
+
+# Publish stage
+FROM build AS publish
+ARG BUILD_CONFIGURATION=Release
+RUN dotnet publish "MicroClient.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+
+# Final image
+FROM base AS final
 WORKDIR /app
 
 # Copy published output from build stage
