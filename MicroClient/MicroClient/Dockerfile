@@ -1,4 +1,4 @@
-# Base image til at køre app'en
+# Base image for running the app
 FROM mcr.microsoft.com/dotnet/runtime:8.0 AS base
 WORKDIR /app
 
@@ -6,28 +6,26 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Kopiér kun csproj først (for bedre caching)
+# Copy only the csproj first (for better caching)
 COPY ["MicroClient.csproj", "./"]
 RUN dotnet restore "MicroClient.csproj"
 
-# Kopiér resten af koden
+# Copy the rest of the code
 COPY . .
 
-# Byg projektet
+# Build the project
 RUN dotnet build "MicroClient.csproj" -c Release -o /app/build
 
 # Publish stage
 FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "MicroClient.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "MicroClient.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 # Final image
 FROM base AS final
 WORKDIR /app
 
-# Copy published output from build stage
-COPY --from=build /app/publish .
+# Copy published output from publish stage
+COPY --from=publish /app/publish .
 
 # Set the entrypoint to run the console app
 ENTRYPOINT ["dotnet", "MicroClient.dll"]
-
