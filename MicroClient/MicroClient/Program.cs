@@ -15,10 +15,16 @@ internal class Program
                             ?? "http://matchmakerservice:5000/Match/health";
 
         var storeUrl = Environment.GetEnvironmentVariable("STORE_URL") 
-                       ?? "http://storeservice:7000/Store";   // GET /Store
+                       ?? "http://storeservice:8081/Store";   // GET /Store
 
         var playerUrl = Environment.GetEnvironmentVariable("PLAYER_URL") 
-                        ?? "http://playerinfoservice:6000/api/player"; // GET /api/player
+                        ?? "http://playerinfoservice:6000/api/player/GetPlayerInfo"; // GET /api/player
+
+        var gameServerUrl = Environment.GetEnvironmentVariable("GAME_SERVEL_URL")
+                        ?? "http://gameserver:5001/health";
+
+        var relayRouterURL = Environment.GetEnvironmentVariable("RELAY_ROUTER_URL")
+                        ?? "http://relayrouter:5002/health";
 
         using var httpClient = new HttpClient();
 
@@ -51,8 +57,6 @@ internal class Program
                 var playerResponse = await httpClient.GetAsync(playerUrl);
                 playerResponse.EnsureSuccessStatusCode();
                 Console.WriteLine("Player Info OK: " + await playerResponse.Content.ReadAsStringAsync());
-                
-                Console.WriteLine("Done sending");
             }
             catch (Exception ex)
             {
