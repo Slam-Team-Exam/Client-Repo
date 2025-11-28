@@ -51,6 +51,8 @@ internal class Program
                 var playerResponse = await httpClient.GetAsync(playerUrl);
                 playerResponse.EnsureSuccessStatusCode();
                 Console.WriteLine("Player Info OK: " + await playerResponse.Content.ReadAsStringAsync());
+                
+                Console.WriteLine("Done sending");
             }
             catch (Exception ex)
             {
