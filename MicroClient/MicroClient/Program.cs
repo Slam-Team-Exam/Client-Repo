@@ -4,23 +4,13 @@ internal class Program
     {
         Console.WriteLine("Client starting…");
 
-        var loginUrl = Environment.GetEnvironmentVariable("LOGIN_URL") 
-                       ?? "http://192.168.1.240:8080/api/auth/health";
+        var loginUrl = "http://localhost:8080/api/auth/health";
+        var matchmakerUrl = "http://localhost:5000/Match/health";
+        var storeUrl = "http://localhost:8081/Store";
+        var playerUrl = "http://localhost:6000/api/player/GetPlayerInfo";
+        var relayRouterURL = "http://localhost:5002/health";
 
-        var matchmakerUrl = Environment.GetEnvironmentVariable("MATCHMAKER_URL") 
-                            ?? "http://192.168.1.243:5000/Match/health";
 
-        var storeUrl = Environment.GetEnvironmentVariable("STORE_URL") 
-                       ?? "http://storeservice:8081/Store";   // GET /Store
-
-        var playerUrl = Environment.GetEnvironmentVariable("PLAYER_URL") 
-                        ?? "http://playerinfoservice:6000/api/player/GetPlayerInfo"; // GET /api/player
-
-        var gameServerUrl = Environment.GetEnvironmentVariable("GAME_SERVEL_URL")
-
-                        ?? "http://gameserver:5001/health";
-                        ?? "http://relayrouter:5002/health";
-        var relayRouterURL = Environment.GetEnvironmentVariable("RELAY_ROUTER_URL")
 
         using var httpClient = new HttpClient();
 
@@ -40,15 +30,15 @@ internal class Program
                 matchResponse.EnsureSuccessStatusCode();
                 Console.WriteLine("Matchmaker OK: " + await matchResponse.Content.ReadAsStringAsync());
 
-                Console.WriteLine($"Calling Store at: {storeUrl}");
-                var storeResponse = await httpClient.GetAsync(storeUrl);
-                storeResponse.EnsureSuccessStatusCode();
-                Console.WriteLine("Store OK: " + await storeResponse.Content.ReadAsStringAsync());
-
                 Console.WriteLine($"Calling Player Info at: {playerUrl}");
                 var playerResponse = await httpClient.GetAsync(playerUrl);
                 playerResponse.EnsureSuccessStatusCode();
                 Console.WriteLine("Player Info OK: " + await playerResponse.Content.ReadAsStringAsync());
+
+                Console.WriteLine($"Calling Store at: {storeUrl}");
+                var storeResponse = await httpClient.GetAsync(storeUrl);
+                storeResponse.EnsureSuccessStatusCode();
+                Console.WriteLine("Store OK: " + await storeResponse.Content.ReadAsStringAsync());
             }
             catch (Exception ex)
             {
