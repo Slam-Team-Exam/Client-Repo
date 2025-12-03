@@ -1,4 +1,4 @@
-﻿internal class Program
+internal class Program
 {
     private static async Task<int> Main(string[] args)
     {
@@ -11,11 +11,16 @@
                             ?? "http://192.168.1.243:5000/Match/health";
 
         var storeUrl = Environment.GetEnvironmentVariable("STORE_URL") 
-                       ?? "http://192.168.1.242:8081/Store";
+                       ?? "http://storeservice:8081/Store";   // GET /Store
 
         var playerUrl = Environment.GetEnvironmentVariable("PLAYER_URL") 
-                        ?? "http://192.168.1.241:6000/api/player/GetPlayerInfo";
+                        ?? "http://playerinfoservice:6000/api/player/GetPlayerInfo"; // GET /api/player
 
+        var gameServerUrl = Environment.GetEnvironmentVariable("GAME_SERVEL_URL")
+
+                        ?? "http://gameserver:5001/health";
+                        ?? "http://relayrouter:5002/health";
+        var relayRouterURL = Environment.GetEnvironmentVariable("RELAY_ROUTER_URL")
 
         using var httpClient = new HttpClient();
 
